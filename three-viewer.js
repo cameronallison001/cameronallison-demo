@@ -4,8 +4,8 @@ const setStatus = (m) => (statusEl.textContent = m || "");
 
 const MODEL_DIR = "assets/";
 const MODELS = [
-  { id: "headset0.glb", label: "Headset 0" },
   { id: "self-portrait2.glb", label: "Self portrait 2" },
+  { id: "headset0.glb", label: "Headset 0" },
 ];
 
 setStatus("Loading…");
@@ -325,19 +325,21 @@ buttons.forEach((btn) => {
       return;
     }
 
-    // Set model-viewer src (simple and reliable on GitHub Pages)
     const mv = document.getElementById('mv-main');
     if (mv) {
-      setStatus('Loading ' + file + ' (model-viewer)…');
-      mv.setAttribute('src', MODEL_DIR + file + '?v=1');
-      // mark preview active
-      const preview = document.querySelector('.model-preview[data-model="' + file + '"]');
-      if (preview) {
-        document.querySelectorAll('.model-preview').forEach(p => p.classList.remove('active'));
-        preview.classList.add('active');
+      // use helper which waits and logs; fallback to Three.js if it fails
+      const success = await setModelViewerSrc(file);
+      if (success) {
+        // mark preview active on success
+        const preview = document.querySelector('.model-preview[data-model="' + file + '"]');
+        if (preview) {
+          document.querySelectorAll('.model-preview').forEach(p => p.classList.remove('active'));
+          preview.classList.add('active');
+        }
+        return;
       }
-      // hide Three.js viewer while using model-viewer
-      document.getElementById('three-container').style.display = 'none';
+      setStatus('❌ model-viewer failed; attempting Three.js loader');
+      loadModel(file);
       return;
     }
 
