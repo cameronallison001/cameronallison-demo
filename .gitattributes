@@ -1,6 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-*.glb filter=lfs diff=lfs merge=lfs -text
-*.gltf filter=lfs diff=lfs merge=lfs -text
-*.bin filter=lfs diff=lfs merge=lfs -text
+# NOTE: .glb, .gltf, and .bin were previously tracked with Git LFS. Removed here so binaries can be committed directly.
+# (If you prefer Git LFS, install it locally and re-enable these lines.)
 *.png filter=lfs diff=lfs merge=lfs -text
