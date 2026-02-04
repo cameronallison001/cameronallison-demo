@@ -427,6 +427,16 @@ async function setModelViewerSrc(file) {
   // ensure element visible
   showModelViewerFor(file);
 
+  // if the model-viewer already has this src, assume it's already loaded and show it
+  const desiredSrc = MODEL_DIR + file + '?v=1';
+  if (mv.getAttribute('src') === desiredSrc) {
+    console.info('setModelViewerSrc: already set — showing', file);
+    // make sure Three.js canvas hidden
+    const container = document.getElementById('three-container'); if (container) container.style.display = 'none';
+    setStatus('✅ Loaded: ' + file + ' (model-viewer)');
+    return true;
+  }
+
   console.info('setModelViewerSrc:', file);
   let loaded = false;
 
