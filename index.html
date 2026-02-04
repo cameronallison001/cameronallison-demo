@@ -1,34 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/addons/p5.sound.min.js"></script>
-    
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flow — Virtual Living</title>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
 
+    <!-- p5 -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.js"></script>
 
+    <!-- model-viewer -->
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
   </head>
-  <title>tutorials</title>
+
   <body>
-    <main>
-      <h1>add website title here???</h1>
-<h2>virtual living</h2>
-<model-viewer src="models/self portrait new.glb" alt="My 3D model"
-              camera-controls auto-rotate
-              style="width:600px; height:400px;">
-</model-viewer>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
-     
-      <p>Hello, my name is <strong>Cameron Allison</strong>! I am following the tutorials</p>
-   <img src="images/motel23.jpg" alt="Description of image">
+    <!-- Scroll Progress Bar -->
+    <div class="progress-wrap">
+      <div id="progress-bar"></div>
+    </div>
+
+    <header class="nav">
+      <div class="nav-left">FLOW</div>
+      <div class="nav-right">
+        <a href="#overview">Overview</a>
+        <a href="#specs">Product Details</a>
+        <a class="btn" href="#model">View 3D</a>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- HERO -->
+      <section class="hero" id="top">
+        <div class="hero-text">
+          <p class="eyebrow">Virtual living</p>
+          <h1 class="title">Flow.</h1>
+          <p class="subtitle">
+A headset designed for maximum presence and minimal distraction.          </p>
+<p>A new way to see the world. </p>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#model">Explore the device</a>
+            <a class="btn ghost" href="#overview">Learn more</a>
+          </div>
+        </div>
+
+        <div class="hero-card" id="model">
+          <div class="card-top">
+            <p class="card-label">Interactive 3D</p>
+            <p class="card-note">Drag to rotate • Scroll to explore</p>
+          </div>
+
+          <!-- Replace models/headset.glb with your finished headset file -->
+          <model-viewer
+            id="headsetModel"
+            src="models/headset.glb"
+            alt="3D headset model"
+            camera-controls
+            auto-rotate
+            rotation-per-second="20deg"
+            exposure="1.05"
+            shadow-intensity="0.8"
+            environment-image="neutral"
+          ></model-viewer>
+
+          <p class="card-footnote">
+Tip: Zoom in on Flow to see the details.          </p>
+        </div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section class="section" id="overview">
+        <h2 class="section-title">Designed for emergence.</h2>
+        <p class="section-sub">
+          A clean, lightweight desing inside and out, built for comfort and
+          presence.
+        </p>
+
+        <div class="grid">
+          <div class="feature">
+            <h3>Lightweight comfort</h3>
+            <p>Balanced weight distribution for long sessions without pressure points.</p>
+          </div>
+          <div class="feature">
+            <h3>True mixed reality</h3>
+            <p>Seamless switching between your room and digital worlds.</p>
+          </div>
+          <div class="feature">
+            <h3>Spatial audio</h3>
+            <p>Sound that locks to objects, making spaces feel real.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPECS -->
+      <section class="section" id="specs">
+        <h2 class="section-title">Product Details.</h2>
+
+        <div class="specs">
+          <div class="spec-row">
+            <span>Display</span><span>Ultra-high resolution (concept)</span>
+          </div>
+          <div class="spec-row">
+            <span>Tracking</span><span>Eye + hand tracking</span>
+          </div>
+          <div class="spec-row">
+            <span>Audio</span><span>Spatial audio array</span>
+          </div>
+          <div class="spec-row">
+            <span>Battery</span><span>All-day optimized</span>
+          </div>
+          <div class="spec-row">
+            <span>Weight</span><span>Lightweight  shell</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <p>Concept project by Cameron Allison • Not a real product.</p>
+      </footer>
     </main>
-    
+
+    <!-- Your scripts -->
     <script src="sketch.js"></script>
+    <script src="scroll.js"></script>
   </body>
 </html>
-
-
-
-
