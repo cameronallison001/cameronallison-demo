@@ -1,61 +1,34 @@
-import * as THREE from "https://unpkg.com/three@0.158.0/build/three.module.js";
-import { GLTFLoader } from "https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js";
-const fallbackImg = document.getElementById("model-fallback");
-
 const container = document.getElementById("three-container");
 const statusEl = document.getElementById("three-status");
+const setStatus = (m) => (statusEl.textContent = m);
 
-function setStatus(msg) {
-  if (statusEl) statusEl.textContent = msg;
-  console.log(msg);
-}
+const MODEL_DIR = "assets/";
+const MODEL_URL = MODEL_DIR + "headset4.gltf?v=9999";
 
-if (!container) {
-  throw new Error("Missing #three-container");
-}
+setStatus("Loading…");
 
-setStatus("Loading 3D…");
-
-// Scene
 const scene = new THREE.Scene();
-
-// Camera
 const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 5000);
-camera.position.set(0, 0.6, 2.5);
 
-// Renderer
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 container.appendChild(renderer.domElement);
 
-// Lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-
+scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 const key = new THREE.DirectionalLight(0xffffff, 1.2);
 key.position.set(3, 4, 5);
 scene.add(key);
 
-const fill = new THREE.DirectionalLight(0x88aaff, 0.45);
-fill.position.set(-4, 2, -3);
-scene.add(fill);
-
-// Controls
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.06;
 controls.enablePan = false;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 1.0;
 
-// Fallback cube (shows Three is running even if GLB fails)
-const fallback = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0xffffff })
-);
-scene.add(fallback);
+let model = null; // ✅ we store it so we can re-frame on resize
 
-// Resize
-function resize() {
+function resizeRendererToContainer() {
   const w = container.clientWidth;
   const h = container.clientHeight;
   if (!w || !h) return;
@@ -64,69 +37,83 @@ function resize() {
   camera.updateProjectionMatrix();
   renderer.setSize(w, h, false);
 }
-window.addEventListener("resize", resize);
-requestAnimationFrame(resize);
 
-// Auto-frame
 function frameObject(obj) {
+  // Reset transform so reframing stays consistent
+  obj.position.set(0, 0, 0);
+  obj.rotation.set(0, 0, 0);
+  obj.scale.set(1, 1, 1);
+
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
 
-  // move model so center is at origin
   obj.position.sub(center);
 
   const maxDim = Math.max(size.x, size.y, size.z);
   if (!isFinite(maxDim) || maxDim === 0) return;
 
   const fov = (camera.fov * Math.PI) / 180;
-  let distance = (maxDim / 2) / Math.tan(fov / 2);
-  distance *= 1.6;
+  let dist = (maxDim / 2) / Math.tan(fov / 2);
+  dist *= 1.7;
 
-  camera.position.set(0, maxDim * 0.25, distance);
-  camera.near = distance / 100;
-  camera.far = distance * 100;
+  camera.position.set(0, maxDim * 0.22, dist);
+  camera.near = dist / 100;
+  camera.far = dist * 100;
   camera.updateProjectionMatrix();
 
   controls.target.set(0, 0, 0);
-  controls.minDistance = distance / 4;
-  controls.maxDistance = distance * 4;
   controls.update();
 }
 
-// Load model (PATH MUST MATCH FOLDER + CASE)
-const MODEL_URL = new URL("./models/headset4.glb", import.meta.url).href;
+// ✅ this is the “move with the box” part
+function onContainerResize() {
+  resizeRendererToContainer();
+  if (model) frameObject(model); // re-center + re-distance when box changes
+}
+new ResizeObserver(onContainerResize).observe(container);
+window.addEventListener("resize", onContainerResize);
+onContainerResize();
 
-const loader = new GLTFLoader();
+// Force all referenced files to load from /assets/
+const manager = new THREE.LoadingManager();
+manager.setURLModifier((url) => {
+  if (url.startsWith("data:")) return url;
+  const clean = url.split("?")[0];
+  const file = clean.split("/").pop();
+  return MODEL_DIR + file + "?v=9999";
+});
+
+manager.onError = (url) => {
+  console.error("Missing:", url);
+  setStatus("❌ Missing file: " + url);
+};
+
+const loader = new THREE.GLTFLoader(manager);
 
 loader.load(
   MODEL_URL,
   (gltf) => {
-    scene.remove(fallback);
-
-    const model = gltf.scene;
+    model = gltf.scene;
     scene.add(model);
 
-    frameObject(model);
+    // Make sure materials update
+    model.traverse((o) => {
+      if (o.isMesh && o.material) o.material.needsUpdate = true;
+    });
 
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.0;
-
-    setStatus("✅ 3D loaded. Drag to rotate • Scroll to zoom.");
+    onContainerResize(); // ✅ frame immediately after load
+    setStatus("✅ Loaded. Drag to rotate • Scroll to zoom.");
   },
   undefined,
   (err) => {
-    console.error("GLB load failed:", err);
-    setStatus("❌ Failed to load ./models/headset4.glb (check path + run local server).");
+    console.error(err);
+    setStatus("❌ GLTF load error. Check console.");
   }
 );
 
-// Render loop
 function animate() {
   requestAnimationFrame(animate);
-
-  if (fallback.parent) fallback.rotation.y += 0.01;
-
   controls.update();
   renderer.render(scene, camera);
 }
