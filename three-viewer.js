@@ -317,15 +317,7 @@ buttons.forEach((btn) => {
     buttons.forEach((b) => b.classList.remove("active"));
     target.classList.add("active");
 
-    setStatus("Checking asset…");
-    const ok = await testAsset(file);
-    if (!ok) {
-      setStatus("❌ Asset unreachable: " + file + ". Showing placeholder.");
-      showPlaceholder();
-      return;
-    }
-
-    // if we have embedded model-viewer elements (mvHeadset/mvSelf), prefer them
+    // prefer embedded model-viewer elements when available — no HEAD request needed
     if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
       const success = await setModelViewerSrc(file);
       if (success) {
@@ -337,12 +329,21 @@ buttons.forEach((btn) => {
         }
         return;
       }
+      // if model-viewer fails, fall back to Three.js loader
       setStatus('❌ model-viewer failed; attempting Three.js loader');
       loadModel(file);
       return;
     }
 
-    // fallback to Three.js loader
+    // No embedded model-viewer; check asset reachability then load with Three.js
+    setStatus('Checking asset…');
+    const ok = await testAsset(file);
+    if (!ok) {
+      setStatus('❌ Asset unreachable: ' + file + '. Showing placeholder.');
+      showPlaceholder();
+      return;
+    }
+
     loadModel(file);
   });
 });
@@ -355,11 +356,7 @@ previewEls.forEach((el) => {
     document.querySelectorAll('.model-preview').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
 
-    setStatus('Checking asset…');
-    const ok = await testAsset(file);
-    if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
-
-    // prefer embedded model-viewer elements when available
+    // prefer embedded model-viewer elements when available — no HEAD request needed
     if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
       const success = await setModelViewerSrc(file);
       if (!success) {
@@ -367,6 +364,10 @@ previewEls.forEach((el) => {
         loadModel(file);
       }
     } else {
+      // No embedded model-viewer; check asset reachability first
+      setStatus('Checking asset…');
+      const ok = await testAsset(file);
+      if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
       loadModel(file);
     }
   });
