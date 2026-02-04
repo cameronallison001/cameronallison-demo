@@ -41,3 +41,40 @@ function draw() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+let cnv;
+
+function setup() {
+  cnv = createCanvas(windowWidth, windowHeight);
+  cnv.position(0, 0);
+  cnv.style("position", "fixed");
+  cnv.style("top", "0");
+  cnv.style("left", "0");
+
+  // Keep p5 behind your HTML (including model-viewer)
+  cnv.style("z-index", "-1");
+
+  // IMPORTANT: don't let canvas block mouse interaction
+  cnv.style("pointer-events", "none");
+}
+
+function draw() {
+  clear(); // transparent canvas so your CSS background shows
+
+  // Optional subtle animated glow background
+  noStroke();
+  const t = millis() * 0.0002;
+
+  for (let i = 0; i < 6; i++) {
+    const x = width * (0.2 + 0.6 * noise(i * 10 + t));
+    const y = height * (0.2 + 0.6 * noise(i * 20 + t));
+    const r = 220 + 120 * noise(i * 30 + t);
+
+    fill(140, 160, 255, 18); // soft bluish glow
+    circle(x, y, r);
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+

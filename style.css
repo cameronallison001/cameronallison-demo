@@ -1,55 +1,46 @@
-/* ---------- Base ---------- */
+/* ===============================
+   RESET + VARIABLES
+================================ */
 :root {
   --bg: #27638e;
   --panel: rgba(255, 255, 255, 0.06);
   --panel-strong: rgba(255, 255, 255, 0.09);
   --text: rgb(255, 255, 255);
-  --muted: rgba(255, 255, 255, 0.767);
-  --hairline: rgba(207, 29, 29, 0.12);
+  --muted: rgba(255, 255, 255, 0.77);
+  --hairline: rgba(255, 255, 255, 0.12);
   --glow: rgba(140, 160, 255, 0.35);
 }
-h1.title {
-  color: rgb(255, 166, 0);
-  font-size: clamp(38px, 4.2vw, 64px);
-  font-weight: 720;
-}
-h2 {
-  color: rgba(255, 166, 0, 0.743);
-  font-size: clamp(24px, 3.2vw, 32px);
-  font-weight: 600;
-}
+
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-canvas {
+
+html,
+body {
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(120, 140, 255, 0.18), transparent 55%),
+    radial-gradient(1000px 700px at 70% 40%, rgba(255, 255, 255, 0.06), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial;
+}
+
+/* ===============================
+   ✅ P5 BACKGROUND CANVAS ONLY
+================================ */
+#p5-bg {
   position: fixed !important;
   inset: 0 !important;
   z-index: -1 !important;
   pointer-events: none !important;
 }
 
-html,
-body {
-  
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(1200px 800px at 20% 10%, rgba(120, 140, 255, 0.18), transparent 55%),
-              radial-gradient(1000px 700px at 70% 40%, rgba(255, 255, 255, 0.06), transparent 60%),
-              var(--bg);
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial;
-    
-}
-
-/* Make p5 canvas stay behind everything */
-canvas {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: -1 !important;
-}
-
-/* ---------- Scroll progress bar ---------- */
+/* ===============================
+   SCROLL PROGRESS
+================================ */
 .progress-wrap {
   position: fixed;
   top: 0;
@@ -58,38 +49,41 @@ canvas {
   width: 100%;
   z-index: 9999;
   background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
 }
 
 #progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
-  box-shadow: 0 0 18px rgba(140, 160, 255, 0.35);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.75)
+  );
+  box-shadow: 0 0 18px var(--glow);
 }
 
-/* ---------- Nav ---------- */
+/* ===============================
+   NAV
+================================ */
 .nav {
   position: sticky;
-  top: 3px; /* below progress bar */
-  z-index: 999;
+  top: 3px;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 22px;
   background: rgba(10, 10, 14, 0.55);
-  border-bottom: 1px solid var(--hairline);
   backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .nav-left {
   font-weight: 650;
-  letter-spacing: 0.2px;
 }
 
 .nav-right {
   display: flex;
-  align-items: center;
   gap: 14px;
 }
 
@@ -103,13 +97,18 @@ canvas {
   color: var(--text);
 }
 
-/* ---------- Layout ---------- */
+/* ===============================
+   PAGE LAYOUT
+================================ */
 .page {
   width: min(1120px, 92vw);
   margin: 0 auto;
   padding-bottom: 80px;
 }
 
+/* ===============================
+   HERO
+================================ */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -125,19 +124,18 @@ canvas {
 }
 
 .eyebrow {
-  color: var(--muted);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-size: 12px;
-  margin: 0 0 10px;
+  color: var(--muted);
+  margin-bottom: 10px;
 }
 
 .title {
   font-size: clamp(38px, 4.2vw, 64px);
-  line-height: 1.03;
-  margin: 0 0 12px;
   font-weight: 720;
-  
+  color: rgb(255, 166, 0);
+  margin-bottom: 12px;
 }
 
 .subtitle {
@@ -145,21 +143,20 @@ canvas {
   font-size: 16px;
   line-height: 1.55;
   max-width: 48ch;
-  margin: 0 0 22px;
+  margin-bottom: 16px;
 }
 
+/* ===============================
+   BUTTONS
+================================ */
 .cta-row {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap;
+  margin-top: 18px;
 }
 
-/* ---------- Buttons ---------- */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 999px;
   border: 1px solid var(--hairline);
   color: var(--text);
@@ -169,28 +166,27 @@ canvas {
 }
 
 .btn:hover {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .btn.primary {
   background: rgba(140, 160, 255, 0.2);
   border-color: rgba(140, 160, 255, 0.35);
-  box-shadow: 0 0 0 1px rgba(140, 160, 255, 0.12) inset,
-    0 18px 60px rgba(140, 160, 255, 0.12);
 }
 
 .btn.primary:hover {
-  background: rgba(140, 160, 255, 0.27);
+  background: rgba(140, 160, 255, 0.3);
 }
 
-.btn.ghost {
-  background: transparent;
-}
-
-/* ---------- Card + model viewer ---------- */
+/* ===============================
+   HERO CARD + THREE.JS
+================================ */
 .hero-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.045));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.045)
+  );
   border: 1px solid var(--hairline);
   border-radius: 22px;
   overflow: hidden;
@@ -201,55 +197,63 @@ canvas {
   display: flex;
   justify-content: space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--hairline);
   background: rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .card-label {
-  margin: 0;
   font-size: 13px;
-  color: var(--text);
   font-weight: 600;
 }
 
 .card-note {
-  margin: 0;
   font-size: 12px;
   color: var(--muted);
 }
 
-model-viewer {
+/* ✅ THREE CONTAINER */
+#three-container {
   width: 100%;
   height: 420px;
-  background: radial-gradient(700px 420px at 50% 45%, rgba(140, 160, 255, 0.16), transparent 55%),
-              rgba(0, 0, 0, 0.12);
+  position: relative;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* ✅ THREE CANVAS MUST NOT BE FIXED */
+#three-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  z-index: 2 !important;
+  display: block !important;
 }
 
 .card-footnote {
-  margin: 0;
-  padding: 12px 16px 16px;
-  color: var(--muted);
+  padding: 12px 16px;
   font-size: 12px;
+  color: var(--muted);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ---------- Sections ---------- */
+/* ===============================
+   SECTIONS
+================================ */
 .section {
   padding: 54px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .section-title {
-  margin: 0 0 10px;
   font-size: 28px;
-  letter-spacing: -0.02em;
+  color: rgba(255, 166, 0, 0.8);
+  margin-bottom: 10px;
 }
 
 .section-sub {
-  margin: 0 0 22px;
   color: var(--muted);
   max-width: 70ch;
   line-height: 1.6;
+  margin-bottom: 22px;
 }
 
 .grid {
@@ -265,43 +269,39 @@ model-viewer {
 }
 
 .feature {
-  padding: 18px 16px;
+  padding: 18px;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .feature h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .feature p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.55;
   font-size: 14px;
+  color: var(--muted);
 }
 
-/* ---------- Specs ---------- */
+/* ===============================
+   SPECS
+================================ */
 .specs {
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .spec-row {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
   padding: 14px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--muted);
 }
 
 .spec-row span:first-child {
-  color: var(--text);
   font-weight: 600;
 }
 
@@ -309,10 +309,12 @@ model-viewer {
   border-bottom: none;
 }
 
-/* ---------- Footer ---------- */
+/* ===============================
+   FOOTER
+================================ */
 .footer {
-  padding: 34px 0 0;
-  color: var(--muted);
+  padding-top: 34px;
   font-size: 12px;
+  color: var(--muted);
   text-align: center;
 }

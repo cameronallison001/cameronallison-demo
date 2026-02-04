@@ -8,27 +8,17 @@
     <!-- CSS -->
     <link rel="stylesheet" href="style.css" />
 
-    <!-- p5 -->
+    <!-- p5 (optional background) -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.js"></script>
-
-    <!-- model-viewer -->
-    <script
-      type="module"
-      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-    ></script>
   </head>
 
-
   <body>
-    
- 
-
     <!-- Scroll Progress Bar -->
-
     <div class="progress-wrap">
       <div id="progress-bar"></div>
     </div>
 
+    <!-- Nav -->
     <header class="nav">
       <div class="nav-left">FLOW</div>
       <div class="nav-right">
@@ -45,8 +35,9 @@
           <p class="eyebrow">Virtual living</p>
           <h1 class="title">Flow.</h1>
           <p class="subtitle">
-A headset designed for maximum presence and minimal distraction.          </p>
-<p>A new way to see the world. </p>
+            A headset designed for maximum presence and minimal distraction.
+          </p>
+          <p class="subtitle" style="margin-top: -10px">A new way to see the world.</p>
 
           <div class="cta-row">
             <a class="btn primary" href="#model">Explore the device</a>
@@ -54,27 +45,17 @@ A headset designed for maximum presence and minimal distraction.          </p>
           </div>
         </div>
 
+        <!-- 3D Card -->
         <div class="hero-card" id="model">
           <div class="card-top">
             <p class="card-label">Interactive 3D</p>
-            <p class="card-note">Drag to rotate • Scroll to explore</p>
+            <p class="card-note">Drag to rotate • Scroll to zoom</p>
           </div>
 
-          <!-- Replace models/headset.glb with your finished headset file -->
-          <model-viewer
-            id="headsetModel"
-            src="models/headset.glb"
-            alt="3D headset model"
-            camera-controls
-            auto-rotate
-            rotation-per-second="20deg"
-            exposure="1.05"
-            shadow-intensity="0.8"
-            environment-image="neutral"
-          ></model-viewer>
+          <!-- ✅ ONLY ONE container, inside the card -->
+          <div id="three-container"></div>
 
-          <p class="card-footnote">
-Tip: Zoom in on Flow to see the details.          </p>
+          <p id="three-status" class="card-footnote">Loading 3D…</p>
         </div>
       </section>
 
@@ -82,8 +63,7 @@ Tip: Zoom in on Flow to see the details.          </p>
       <section class="section" id="overview">
         <h2 class="section-title">Designed for emergence.</h2>
         <p class="section-sub">
-          A clean, lightweight desing inside and out, built for comfort and
-          presence.
+          A clean, lightweight design inside and out, built for comfort and presence.
         </p>
 
         <div class="grid">
@@ -107,21 +87,11 @@ Tip: Zoom in on Flow to see the details.          </p>
         <h2 class="section-title">Product Details.</h2>
 
         <div class="specs">
-          <div class="spec-row">
-            <span>Display</span><span>Ultra-high resolution (concept)</span>
-          </div>
-          <div class="spec-row">
-            <span>Tracking</span><span>Eye + hand tracking</span>
-          </div>
-          <div class="spec-row">
-            <span>Audio</span><span>Spatial audio array</span>
-          </div>
-          <div class="spec-row">
-            <span>Battery</span><span>All-day optimized</span>
-          </div>
-          <div class="spec-row">
-            <span>Weight</span><span>Lightweight  shell</span>
-          </div>
+          <div class="spec-row"><span>Display</span><span>Ultra-high resolution (concept)</span></div>
+          <div class="spec-row"><span>Tracking</span><span>Eye + hand tracking</span></div>
+          <div class="spec-row"><span>Audio</span><span>Spatial audio array</span></div>
+          <div class="spec-row"><span>Battery</span><span>All-day optimized</span></div>
+          <div class="spec-row"><span>Weight</span><span>Lightweight shell</span></div>
         </div>
       </section>
 
@@ -135,7 +105,108 @@ Tip: Zoom in on Flow to see the details.          </p>
     <script src="sketch.js"></script>
     <script src="scroll.js"></script>
 
+    <!-- ✅ THREE.JS (ONLY) -->
+    <script type="module">
+      import * as THREE from "https://unpkg.com/three@0.158.0/build/three.module.js";
+      import { GLTFLoader } from "https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js";
+      import { OrbitControls } from "https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js";
+
+      const container = document.getElementById("three-container");
+      const statusEl = document.getElementById("three-status");
+
+      // Make sure container has size (also set in CSS ideally)
+      container.style.width = "100%";
+      container.style.height = "420px";
+
+      // Scene
+      const scene = new THREE.Scene();
+
+      // Camera
+      const camera = new THREE.PerspectiveCamera(
+        35,
+        container.clientWidth / container.clientHeight,
+        0.01,
+        500
+      );
+
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      // Lights (soft)
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      const key = new THREE.DirectionalLight(0xffffff, 1.2);
+      key.position.set(3, 4, 2);
+      scene.add(key);
+
+      // Controls
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 1.0;
+
+      // Frame model so it ALWAYS appears
+      function frameObject(obj) {
+        const box = new THREE.Box3().setFromObject(obj);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        obj.position.sub(center); // center at origin
+
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+        cameraZ *= 1.6;
+
+        camera.position.set(0, maxDim * 0.2, cameraZ);
+        camera.near = cameraZ / 100;
+        camera.far = cameraZ * 100;
+        camera.updateProjectionMatrix();
+
+        controls.target.set(0, 0, 0);
+        controls.minDistance = cameraZ / 4;
+        controls.maxDistance = cameraZ * 4;
+        controls.update();
+      }
+
+      // Load model (EDIT THIS FILE NAME ONLY)
+      const loader = new GLTFLoader();
+      statusEl.textContent = "Loading models/headset4.glb …";
+
+      loader.load(
+        "models/headset4.glb",
+        (gltf) => {
+          scene.add(gltf.scene);
+          frameObject(gltf.scene);
+          statusEl.textContent = "✅ Loaded. Drag to rotate • Scroll to zoom.";
+          console.log("✅ Model loaded");
+        },
+        undefined,
+        (error) => {
+          console.error("❌ GLTF error:", error);
+          statusEl.textContent = "❌ Failed to load. Check filename/path in models/.";
+        }
+      );
+
+      // Resize
+      window.addEventListener("resize", () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+
+      // Animate
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
     
   </body>
-  
 </html>
