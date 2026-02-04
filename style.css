@@ -223,8 +223,9 @@ html, body {
 }
 
 /* Primary model-viewer styling */
-.mv-main-wrap { width: 100%; height: 420px; background: rgba(0,0,0,0.06); border-bottom: 1px solid var(--hairline); }
+.mv-main-wrap { width: 100%; height: 420px; background: rgba(0,0,0,0.06); border-bottom: 1px solid var(--hairline); position: relative; }
 .mv-main { width: 100%; height: 100%; display: block; }
+.mv-hidden { display: none !important; }
 
 /* Hide the Three.js canvas (we'll keep code but show model-viewer by default) */
 #three-container { display: none; }

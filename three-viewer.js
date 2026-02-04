@@ -424,21 +424,56 @@ if (btnHeadset) {
   });
 }
 
-// model-viewer events (update status + progress)
-const mvMain = document.getElementById('mv-main');
-if (mvMain) {
-  mvMain.addEventListener('load', () => {
-    console.info('model-viewer: load event');
-    setStatus('✅ Loaded (model-viewer). Drag to rotate • Scroll to zoom.');
-  });
-  mvMain.addEventListener('error', (e) => { setStatus('❌ model-viewer load error. Check console.'); console.error('model-viewer error', e); });
-  mvMain.addEventListener('progress', (ev) => { console.info('model-viewer progress', ev.detail || ev); });
+// model-viewer elements
+const mvHeadset = document.getElementById('mv-headset');
+const mvSelf = document.getElementById('mv-self');
+
+function showModelViewerFor(file) {
+  // map file -> element
+  const map = {
+    'headset0.glb': mvHeadset,
+    'self-portrait2.glb': mvSelf,
+  };
+  const el = map[file];
+  if (!el) return;
+  // hide both
+  [mvHeadset, mvSelf].forEach(m => { if (m) m.classList.add('mv-hidden'); });
+  // show target
+  el.classList.remove('mv-hidden');
+  // update status
+  setStatus('Loading ' + file + ' (model-viewer)…');
 }
 
-// helper to set src with timeout + debug
+if (mvHeadset) {
+  mvHeadset.addEventListener('load', () => {
+    console.info('mv-headset: load');
+    setStatus('✅ Headset loaded (model-viewer)');
+  });
+  mvHeadset.addEventListener('error', (e) => { console.error('mv-headset error', e); setStatus('❌ Headset model-viewer error'); });
+}
+if (mvSelf) {
+  mvSelf.addEventListener('load', () => {
+    console.info('mv-self: load');
+    setStatus('✅ Self portrait loaded (model-viewer)');
+  });
+  mvSelf.addEventListener('error', (e) => { console.error('mv-self error', e); setStatus('❌ Self portrait model-viewer error'); });
+}
+
+// helper to set src with timeout + debug (targets the correct model-viewer element)
 async function setModelViewerSrc(file) {
-  const mv = document.getElementById('mv-main');
-  if (!mv) return false;
+  // map file -> element
+  const map = {
+    'headset0.glb': mvHeadset,
+    'self-portrait2.glb': mvSelf,
+  };
+  const mv = map[file];
+  if (!mv) {
+    console.warn('No model-viewer element for', file);
+    return false;
+  }
+
+  // ensure element visible
+  showModelViewerFor(file);
 
   console.info('setModelViewerSrc:', file);
   let loaded = false;
@@ -453,7 +488,7 @@ async function setModelViewerSrc(file) {
   mv.addEventListener('load', onLoad);
   mv.addEventListener('error', onError);
 
-  // set src
+  // set src (model-viewer will fetch it)
   mv.setAttribute('src', MODEL_DIR + file + '?v=1');
   // make sure Three.js canvas hidden
   const container = document.getElementById('three-container'); if (container) container.style.display = 'none';
@@ -477,24 +512,12 @@ async function setModelViewerSrc(file) {
 
 // initial model: prefer model-viewer for simplicity
 const initial = MODELS[0].id;
-const mv = document.getElementById('mv-main');
-if (mv) {
-  // set initial using helper so we get timeout/logging
-  setModelViewerSrc(initial).then(ok => {
-    if (ok) document.querySelector('.model-preview[data-model="' + initial + '"]')?.classList.add('active');
-  });
-} else {
-  // fallback to three.js
-  (async () => {
-    const ok = await testAsset(initial);
-    if (!ok) {
-      setStatus('❌ Initial asset unreachable: ' + initial + '. Showing placeholder.');
-      showPlaceholder();
-    } else {
-      loadModel(initial);
-    }
-  })();
-}
+// show the static element and let it load on its own
+showModelViewerFor(initial);
+// also run the helper to get timeout/logging
+setModelViewerSrc(initial).then(ok => {
+  if (ok) document.querySelector('.model-preview[data-model="' + initial + '"]')?.classList.add('active');
+});
 
 // --- previews: small auto-rotating canvases that load each model ---
 const previewEls = document.querySelectorAll('.model-preview');

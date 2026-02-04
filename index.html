@@ -69,9 +69,21 @@
             </div>
           </div>
 
-          <!-- Primary model-viewer (fallback / simple 3D renderer) -->
+          <!-- Primary model-viewers: both GLBs embedded so either can be shown instantly -->
           <div class="mv-main-wrap">
-            <model-viewer id="mv-main"
+            <model-viewer id="mv-headset"
+              src="assets/headset0.glb?v=1"
+              camera-controls
+              auto-rotate
+              auto-rotate-delay="0"
+              interaction-prompt="none"
+              exposure="1.1"
+              shadow-intensity="0.4"
+              alt="Headset 0"
+              class="mv-main mv-hidden"
+            ></model-viewer>
+
+            <model-viewer id="mv-self"
               src="assets/self-portrait2.glb?v=1"
               camera-controls
               auto-rotate
