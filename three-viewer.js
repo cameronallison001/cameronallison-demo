@@ -477,6 +477,34 @@ setModelViewerSrc(initial).then(ok => {
   if (ok) document.querySelector('.model-preview[data-model="' + initial + '"]')?.classList.add('active');
 });
 
+// Header quick-action: open 3D card and show Self portrait 2
+const btnViewSelf = document.getElementById('btn-view-self');
+if (btnViewSelf) {
+  btnViewSelf.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    const file = btnViewSelf.dataset.model || 'self-portrait2.glb';
+
+    // sync UI (model switch buttons + previews)
+    document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
+    document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
+
+    // show and load the model via model-viewer when available
+    if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
+      const ok = await setModelViewerSrc(file);
+      if (!ok) {
+        setStatus('❌ model-viewer failed; attempting Three.js loader');
+        loadModel(file);
+      }
+    } else {
+      // fallback
+      loadModel(file);
+    }
+
+    // scroll the 3D card into view
+    document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
 // --- previews: small auto-rotating canvases that load each model ---
 // reuse the existing `previewEls` NodeList declared above
 
