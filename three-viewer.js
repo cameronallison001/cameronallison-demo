@@ -520,7 +520,7 @@ setModelViewerSrc(initial).then(ok => {
 });
 
 // --- previews: small auto-rotating canvases that load each model ---
-const previewEls = document.querySelectorAll('.model-preview');
+// reuse the existing `previewEls` NodeList declared above
 
 function createPreview(el, file) {
   const w = el.clientWidth || 140;
