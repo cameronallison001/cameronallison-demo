@@ -428,40 +428,9 @@ async function setModelViewerSrc(file) {
   // ensure element visible
   showModelViewerFor(file);
 
-  const desiredSrc = MODEL_DIR + file + '?v=1';
-  // if the model-viewer already has this src, wait briefly for a load event; if it doesn't arrive, force a reload
-  if (mv.getAttribute('src') === desiredSrc) {
-    console.info('setModelViewerSrc: src already set for', file, '- waiting for load event (short)');
-
-    let loadedShort = false;
-    const onLoadShort = () => { loadedShort = true; mv.removeEventListener('load', onLoadShort); mv.removeEventListener('error', onErrorShort); };
-    const onErrorShort = (e) => { console.warn('model-viewer error (short-wait)', e); mv.removeEventListener('load', onLoadShort); mv.removeEventListener('error', onErrorShort); };
-
-    mv.addEventListener('load', onLoadShort);
-    mv.addEventListener('error', onErrorShort);
-
-    const container = document.getElementById('three-container'); if (container) container.style.display = 'none';
-    setStatus('Loading ' + file + ' (model-viewer)…');
-
-    const startShort = Date.now();
-    while (!loadedShort && Date.now() - startShort < 3000) {
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise(r => setTimeout(r, 200));
-    }
-
-    mv.removeEventListener('load', onLoadShort);
-    mv.removeEventListener('error', onErrorShort);
-
-    if (loadedShort) {
-      setStatus('✅ Loaded: ' + file + ' (model-viewer)');
-      return true;
-    }
-
-    console.warn('model-viewer did not fire load for existing src; forcing reload for', file);
-    // force reload by appending a cache-buster
-    mv.setAttribute('src', desiredSrc + '&cb=' + Date.now());
-    // fall through to the normal load wait
-  }
+  // Always force a fresh fetch when switching to an embedded model-viewer (use cache-buster)
+  // This avoids timing problems when the target element was hidden and didn't load previously.
+  // We'll set the src below with a cache-buster and wait for the load event.
 
   console.info('setModelViewerSrc:', file);
   let loaded = false;
