@@ -516,16 +516,34 @@ if (btnShowSelf) {
     document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
     document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
 
-    // show and load the model via model-viewer when available
+    // Prefer model-viewer but fall back immediately to Three.js loader if it does not start within 1s
     if (mvSelf) {
-      const ok = await setModelViewerSrc(file);
-      if (!ok) {
-        setStatus('❌ model-viewer failed; attempting Three.js loader');
+      // make sure the model-viewer is visible
+      showModelViewerFor(file);
+
+      // start model-viewer load but do not block UI: if it doesn't load quickly, use Three.js
+      const promise = setModelViewerSrc(file);
+
+      // wait briefly for model-viewer to start loading
+      await new Promise(r => setTimeout(r, 1000));
+
+      // if the status indicates a timeout or error, or model hasn't loaded, use Three.js
+      const failed = document.getElementById('three-status')?.textContent?.includes('model-viewer failed') || document.getElementById('three-status')?.textContent?.includes('load timed out');
+      if (failed) {
+        setStatus('❌ model-viewer not responding; falling back to Three.js loader');
+        // show the Three.js container and load
+        const container = document.getElementById('three-container'); if (container) container.style.display = '';
         loadModel(file);
       }
-    } else {
-      loadModel(file);
+
+      // still scroll into view
+      document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
+
+    // no model-viewer; directly use Three.js loader
+    const container = document.getElementById('three-container'); if (container) container.style.display = '';
+    loadModel(file);
 
     // scroll the 3D card into view
     document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
