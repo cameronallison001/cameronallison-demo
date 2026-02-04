@@ -296,3 +296,6 @@ html, body {
   color: var(--muted);
   text-align: center;
 }
+.mv-hidden {
+  display: none;
+}
