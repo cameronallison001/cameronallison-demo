@@ -593,23 +593,7 @@ previewEls.forEach((el) => createPreview(el, el.dataset.model));
 const initPreview = document.querySelector('.model-preview[data-model="' + initial + '"]');
 if (initPreview) initPreview.classList.add('active');
 
-// Quick buttons: show the requested model using the unified selector
-const btnShowHeadset = document.getElementById('btn-show-headset');
-if (btnShowHeadset) {
-  btnShowHeadset.addEventListener('click', async (ev) => {
-    ev.preventDefault();
-    await selectModel('headset0.glb');
-    document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-}
-const btnShowSelf = document.getElementById('btn-show-self');
-if (btnShowSelf) {
-  btnShowSelf.addEventListener('click', async (ev) => {
-    ev.preventDefault();
-    await selectModel('self-portrait2.glb');
-    document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-}
+
 
 function animate() {
   requestAnimationFrame(animate);
