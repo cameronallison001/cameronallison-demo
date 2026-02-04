@@ -314,37 +314,9 @@ buttons.forEach((btn) => {
   btn.addEventListener("click", async (ev) => {
     const target = ev.currentTarget;
     const file = target.dataset.model;
-    buttons.forEach((b) => b.classList.remove("active"));
-    target.classList.add("active");
 
-    // prefer embedded model-viewer elements when available — no HEAD request needed
-    if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
-      const success = await setModelViewerSrc(file);
-      if (success) {
-        // mark preview active on success
-        const preview = document.querySelector('.model-preview[data-model="' + file + '"]');
-        if (preview) {
-          document.querySelectorAll('.model-preview').forEach(p => p.classList.remove('active'));
-          preview.classList.add('active');
-        }
-        return;
-      }
-      // if model-viewer fails, fall back to Three.js loader
-      setStatus('❌ model-viewer failed; attempting Three.js loader');
-      loadModel(file);
-      return;
-    }
-
-    // No embedded model-viewer; check asset reachability then load with Three.js
-    setStatus('Checking asset…');
-    const ok = await testAsset(file);
-    if (!ok) {
-      setStatus('❌ Asset unreachable: ' + file + '. Showing placeholder.');
-      showPlaceholder();
-      return;
-    }
-
-    loadModel(file);
+    // use the unified selector which handles MV and fallback
+    await selectModel(file);
   });
 });
 
@@ -395,6 +367,51 @@ function showModelViewerFor(file) {
   el.classList.remove('mv-hidden');
   // update status
   setStatus('Loading ' + file + ' (model-viewer)…');
+}
+
+// Unified model selector used by buttons, previews and quick actions
+async function selectModel(file) {
+  console.info('selectModel:', file);
+
+  // sync UI: model buttons and previews
+  document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
+  document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
+
+  // If an embedded model-viewer is available for this file, try it first
+  const hasMV = (file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf);
+  if (hasMV) {
+    // make the right model-viewer visible
+    showModelViewerFor(file);
+
+    // attempt to load via model-viewer (this waits and returns boolean)
+    const ok = await setModelViewerSrc(file);
+    if (ok) {
+      console.info('selectModel: model-viewer loaded', file);
+      return true;
+    }
+
+    // model-viewer failed or timed out -> fall back to Three.js
+    console.warn('selectModel: model-viewer failed for', file, 'falling back to Three.js');
+    setStatus('❌ model-viewer failed; falling back to Three.js');
+    // show Three.js canvas and load
+    const container = document.getElementById('three-container'); if (container) container.style.display = '';
+    loadModel(file);
+    return false;
+  }
+
+  // No embedded model-viewer; test asset then load via Three.js
+  setStatus('Checking asset…');
+  const okAsset = await testAsset(file);
+  if (!okAsset) {
+    setStatus('❌ Asset unreachable: ' + file + '. Showing placeholder.');
+    showPlaceholder();
+    return false;
+  }
+
+  // load using Three.js
+  const container = document.getElementById('three-container'); if (container) container.style.display = '';
+  loadModel(file);
+  return true;
 }
 
 if (mvHeadset) {
@@ -627,16 +644,8 @@ function createPreview(el, file) {
       }
     });
 
-    // ensure asset reachable before loading
-    setStatus('Checking asset…');
-    const ok = await testAsset(file);
-    if (!ok) {
-      setStatus('❌ Asset unreachable: ' + file + '. Showing placeholder.');
-      showPlaceholder();
-      return;
-    }
-
-    loadModel(file);
+    // use unified selector which handles model-viewer + fallback
+    await selectModel(file);
   });
 
   // keyboard accessibility (Enter / Space)
