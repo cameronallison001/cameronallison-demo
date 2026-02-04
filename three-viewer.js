@@ -593,6 +593,16 @@ previewEls.forEach((el) => createPreview(el, el.dataset.model));
 const initPreview = document.querySelector('.model-preview[data-model="' + initial + '"]');
 if (initPreview) initPreview.classList.add('active');
 
+// explicit handler for Headset button (in addition to general model-btn flow)
+const btnHeadset = document.getElementById('btn-headset');
+if (btnHeadset) {
+  btnHeadset.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    await selectModel('headset0.glb');
+    document.getElementById('model')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
 
 
 function animate() {
