@@ -6,13 +6,12 @@
     <title>Flow — Virtual Living</title>
 
     <link rel="stylesheet" href="style.css" />
-<div id="three-container"></div>
-<p id="three-status">Loading…</p>
+
 
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="three-viewer.js"></script>
+<script src="https://unpkg.com/three@0.158.0/examples/js/loaders/DRACOLoader.js"></script>
 
     <!-- ✅ model-viewer (reliable 3D on GitHub Pages) -->
     <script
@@ -57,26 +56,43 @@
         <div class="hero-card" id="model">
           <div class="card-top">
             <p class="card-label">Interactive 3D</p>
-            <p class="card-note">Drag to rotate • Scroll to zoom</p>
+            <div class="card-controls">
+              <p class="card-note">Drag to rotate • Scroll to zoom</p>
+
+              <div class="model-switch" role="tablist" aria-label="Choose model">
+                <button class="model-btn active" data-model="headset0.glb">Headset 0</button>
+                <button class="model-btn" data-model="self-portrait2.glb">Self portrait 2</button>
+              </div>
+
+              <button id="btn-self" class="btn" title="Show Self portrait 2">Show Self portrait 2</button>
+            </div>
           </div>
 
-          <!-- ✅ This replaces Three.js completely -->
-          <model-viewer
-            class="mv"
-            src="assets/headset4.gltf?v=1"
-            camera-controls
-            auto-rotate
-            auto-rotate-delay="0"
-            rotation-per-second="20deg"
-            interaction-prompt="none"
-            shadow-intensity="0.4"
-            exposure="1.1"
-            ar
-            alt="Flow headset 3D model"
-          ></model-viewer>
+          <!-- Primary model-viewer (fallback / simple 3D renderer) -->
+          <div class="mv-main-wrap">
+            <model-viewer id="mv-main"
+              src="assets/headset0.glb?v=1"
+              camera-controls
+              auto-rotate
+              auto-rotate-delay="0"
+              interaction-prompt="none"
+              exposure="1.1"
+              shadow-intensity="0.4"
+              alt="Headset 0"
+              class="mv-main"
+            ></model-viewer>
+          </div>
 
-          <p class="card-footnote">
-            Flow
+          <div class="previews">
+            <div class="model-preview" data-model="headset0.glb" role="button" tabindex="0" aria-label="Headset 0">
+              <div class="preview-label">Headset 0</div>
+            </div>
+            <div class="model-preview" data-model="self-portrait2.glb" role="button" tabindex="0" aria-label="Self portrait 2">
+              <div class="preview-label">Self portrait 2</div>
+            </div>
+          </div>
+
+          <p id="three-status" class="card-footnote">Loading…</p>
         </div>
       </section>
 
@@ -122,5 +138,6 @@
     </main>
 
     <script src="scroll.js"></script>
+    <script src="three-viewer.js"></script>
   </body>
 </html>

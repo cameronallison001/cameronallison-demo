@@ -160,6 +160,75 @@ html, body {
   display: block !important;
 }
 
+.card-controls { display:flex; gap:12px; align-items:center; }
+
+.model-switch { display:flex; gap:8px; }
+
+.model-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.model-btn:hover { background: rgba(255,255,255,0.04); }
+
+.model-btn.active {
+  background: rgba(140, 160, 255, 0.2);
+  border-color: rgba(140, 160, 255, 0.35);
+}
+
+/* Small control button next to model switch */
+#btn-self { margin-left: 12px; padding: 6px 10px; font-size: 13px; }
+#btn-self:hover { opacity: 0.95; }
+
+
+.previews {
+  display:flex;
+  gap:12px;
+  padding: 12px 16px;
+  align-items:center;
+}
+
+.model-preview {
+  width: 140px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  background: rgba(0,0,0,0.06);
+  cursor: pointer;
+  position: relative;
+}
+
+.model-preview canvas { width: 100% !important; height: 100% !important; display: block !important; }
+
+.model-preview .preview-label {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  background: rgba(0,0,0,0.36);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.model-preview.active {
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+  border-color: rgba(140,160,255,0.35);
+}
+
+/* Primary model-viewer styling */
+.mv-main-wrap { width: 100%; height: 420px; background: rgba(0,0,0,0.06); border-bottom: 1px solid var(--hairline); }
+.mv-main { width: 100%; height: 100%; display: block; }
+
+/* Hide the Three.js canvas (we'll keep code but show model-viewer by default) */
+#three-container { display: none; }
+
 .card-footnote {
   padding: 12px 16px;
   font-size: 12px;
