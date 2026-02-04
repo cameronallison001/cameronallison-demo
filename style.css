@@ -24,6 +24,7 @@ h2 {
 
 html,
 body {
+  
   margin: 0;
   padding: 0;
   background: radial-gradient(1200px 800px at 20% 10%, rgba(120, 140, 255, 0.18), transparent 55%),
@@ -32,6 +33,7 @@ body {
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial;
+    
 }
 
 /* Make p5 canvas stay behind everything */
