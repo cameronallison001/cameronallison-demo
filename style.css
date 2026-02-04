@@ -1,6 +1,3 @@
-/* ===============================
-   RESET + VARIABLES
-================================ */
 :root {
   --bg: #27638e;
   --panel: rgba(255, 255, 255, 0.06);
@@ -11,26 +8,18 @@
   --glow: rgba(140, 160, 255, 0.35);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
-body {
+html, body {
   background:
     radial-gradient(1200px 800px at 20% 10%, rgba(120, 140, 255, 0.18), transparent 55%),
     radial-gradient(1000px 700px at 70% 40%, rgba(255, 255, 255, 0.06), transparent 60%),
     var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
 }
 
-/* ===============================
-   ✅ P5 BACKGROUND CANVAS ONLY
-================================ */
+/* p5 background canvas */
 #p5-bg {
   position: fixed !important;
   inset: 0 !important;
@@ -38,15 +27,10 @@ body {
   pointer-events: none !important;
 }
 
-/* ===============================
-   SCROLL PROGRESS
-================================ */
 .progress-wrap {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  width: 100%;
+  top: 0; left: 0;
+  height: 3px; width: 100%;
   z-index: 9999;
   background: rgba(255, 255, 255, 0.06);
 }
@@ -54,17 +38,10 @@ body {
 #progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.75)
-  );
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
   box-shadow: 0 0 18px var(--glow);
 }
 
-/* ===============================
-   NAV
-================================ */
 .nav {
   position: sticky;
   top: 3px;
@@ -78,14 +55,8 @@ body {
   border-bottom: 1px solid var(--hairline);
 }
 
-.nav-left {
-  font-weight: 650;
-}
-
-.nav-right {
-  display: flex;
-  gap: 14px;
-}
+.nav-left { font-weight: 650; }
+.nav-right { display: flex; gap: 14px; }
 
 .nav a {
   color: var(--muted);
@@ -93,22 +64,14 @@ body {
   font-size: 14px;
 }
 
-.nav a:hover {
-  color: var(--text);
-}
+.nav a:hover { color: var(--text); }
 
-/* ===============================
-   PAGE LAYOUT
-================================ */
 .page {
   width: min(1120px, 92vw);
   margin: 0 auto;
   padding-bottom: 80px;
 }
 
-/* ===============================
-   HERO
-================================ */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -118,9 +81,7 @@ body {
 }
 
 @media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
+  .hero { grid-template-columns: 1fr; }
 }
 
 .eyebrow {
@@ -146,14 +107,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* ===============================
-   BUTTONS
-================================ */
-.cta-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 18px;
-}
+.cta-row { display: flex; gap: 12px; margin-top: 18px; }
 
 .btn {
   padding: 10px 16px;
@@ -165,28 +119,17 @@ body {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
+.btn:hover { background: rgba(255, 255, 255, 0.08); }
 
 .btn.primary {
   background: rgba(140, 160, 255, 0.2);
   border-color: rgba(140, 160, 255, 0.35);
 }
 
-.btn.primary:hover {
-  background: rgba(140, 160, 255, 0.3);
-}
+.btn.primary:hover { background: rgba(140, 160, 255, 0.3); }
 
-/* ===============================
-   HERO CARD + THREE.JS
-================================ */
 .hero-card {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.07),
-    rgba(255, 255, 255, 0.045)
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.045));
   border: 1px solid var(--hairline);
   border-radius: 22px;
   overflow: hidden;
@@ -201,30 +144,19 @@ body {
   border-bottom: 1px solid var(--hairline);
 }
 
-.card-label {
-  font-size: 13px;
-  font-weight: 600;
-}
+.card-label { font-size: 13px; font-weight: 600; }
+.card-note { font-size: 12px; color: var(--muted); }
 
-.card-note {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* ✅ THREE CONTAINER */
 #three-container {
   width: 100%;
   height: 420px;
-  position: relative;
   background: rgba(0, 0, 0, 0.12);
+  position: relative;
 }
 
-/* ✅ THREE CANVAS MUST NOT BE FIXED */
 #three-container canvas {
   width: 100% !important;
   height: 100% !important;
-  position: relative !important;
-  z-index: 2 !important;
   display: block !important;
 }
 
@@ -235,9 +167,6 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ===============================
-   SECTIONS
-================================ */
 .section {
   padding: 54px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -263,9 +192,7 @@ body {
 }
 
 @media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+  .grid { grid-template-columns: 1fr; }
 }
 
 .feature {
@@ -275,18 +202,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.feature h3 {
-  margin-bottom: 8px;
-}
+.feature h3 { margin-bottom: 8px; }
+.feature p { font-size: 14px; color: var(--muted); }
 
-.feature p {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-/* ===============================
-   SPECS
-================================ */
 .specs {
   border-radius: 18px;
   overflow: hidden;
@@ -301,17 +219,9 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.spec-row span:first-child {
-  font-weight: 600;
-}
+.spec-row span:first-child { font-weight: 600; }
+.spec-row:last-child { border-bottom: none; }
 
-.spec-row:last-child {
-  border-bottom: none;
-}
-
-/* ===============================
-   FOOTER
-================================ */
 .footer {
   padding-top: 34px;
   font-size: 12px;
