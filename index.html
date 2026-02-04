@@ -61,8 +61,8 @@
               <p class="card-note">Drag to rotate • Scroll to zoom</p>
 
               <div class="model-switch" role="tablist" aria-label="Choose model">
-                <button class="model-btn active" data-model="headset0.glb">Headset</button>
-                <button class="model-btn" data-model="self-portrait2.glb">See On</button>
+                <button class="model-btn" data-model="headset0.glb">Headset</button>
+                <button class="model-btn active" data-model="self-portrait2.glb">Self portrait 2</button>
               </div>
               <!-- Direct button to show Self portrait 2 quickly -->
               <button id="btn-show-self" class="btn" title="See Self portrait 2">See Self portrait 2</button>            </div>
@@ -79,7 +79,7 @@
               exposure="1.1"
               shadow-intensity="0.4"
               alt="Headset 0"
-              class="mv-main"
+              class="mv-main mv-hidden"
             ></model-viewer>
 
             <model-viewer id="mv-self"
@@ -91,15 +91,15 @@
               exposure="1.1"
               shadow-intensity="0.4"
               alt="Self portrait 2"
-              class="mv-main mv-hidden"
+              class="mv-main"
             ></model-viewer>
           </div>
 
           <div class="previews">
-            <div class="model-preview active" data-model="headset0.glb" role="button" tabindex="0" aria-label="Headset">
+            <div class="model-preview" data-model="headset0.glb" role="button" tabindex="0" aria-label="Headset">
               <div class="preview-label">Headset</div>
             </div>
-            <div class="model-preview" data-model="self-portrait2.glb" role="button" tabindex="0" aria-label="Self portrait 2">
+            <div class="model-preview active" data-model="self-portrait2.glb" role="button" tabindex="0" aria-label="Self portrait 2">
               <div class="preview-label">See On</div>
             </div>
           </div>
