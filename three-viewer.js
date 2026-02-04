@@ -392,20 +392,65 @@ if (btnSelf) {
   });
 }
 
-// model-viewer events (update status)
+// model-viewer events (update status + progress)
 const mvMain = document.getElementById('mv-main');
 if (mvMain) {
-  mvMain.addEventListener('load', () => { setStatus('✅ Loaded (model-viewer). Drag to rotate • Scroll to zoom.'); });
+  mvMain.addEventListener('load', () => {
+    console.info('model-viewer: load event');
+    setStatus('✅ Loaded (model-viewer). Drag to rotate • Scroll to zoom.');
+  });
   mvMain.addEventListener('error', (e) => { setStatus('❌ model-viewer load error. Check console.'); console.error('model-viewer error', e); });
+  mvMain.addEventListener('progress', (ev) => { console.info('model-viewer progress', ev.detail || ev); });
+}
+
+// helper to set src with timeout + debug
+async function setModelViewerSrc(file) {
+  const mv = document.getElementById('mv-main');
+  if (!mv) return false;
+
+  console.info('setModelViewerSrc:', file);
+  let loaded = false;
+
+  const onLoad = () => { loaded = true; cleanup(); };
+  const onError = (e) => { console.error('model-viewer error during setSrc', e); cleanup(); };
+  const cleanup = () => {
+    mv.removeEventListener('load', onLoad);
+    mv.removeEventListener('error', onError);
+  };
+
+  mv.addEventListener('load', onLoad);
+  mv.addEventListener('error', onError);
+
+  // set src
+  mv.setAttribute('src', MODEL_DIR + file + '?v=1');
+  // make sure Three.js canvas hidden
+  const container = document.getElementById('three-container'); if (container) container.style.display = 'none';
+  setStatus('Loading ' + file + ' (model-viewer)…');
+
+  // wait up to 12s
+  const start = Date.now();
+  while (!loaded && Date.now() - start < 12000) {
+    // poll for load
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  if (!loaded) {
+    console.warn('model-viewer load timed out for', file);
+    setStatus('❌ model-viewer load timed out for ' + file + '. Check console.');
+    return false;
+  }
+  return true;
 }
 
 // initial model: prefer model-viewer for simplicity
 const initial = MODELS[0].id;
 const mv = document.getElementById('mv-main');
 if (mv) {
-  mv.setAttribute('src', MODEL_DIR + initial + '?v=1');
-  document.querySelector('.model-preview[data-model="' + initial + '"]')?.classList.add('active');
-  setStatus('Loading ' + initial + ' (model-viewer)…');
+  // set initial using helper so we get timeout/logging
+  setModelViewerSrc(initial).then(ok => {
+    if (ok) document.querySelector('.model-preview[data-model="' + initial + '"]')?.classList.add('active');
+  });
 } else {
   // fallback to three.js
   (async () => {
