@@ -325,9 +325,8 @@ buttons.forEach((btn) => {
       return;
     }
 
-    const mv = document.getElementById('mv-main');
-    if (mv) {
-      // use helper which waits and logs; fallback to Three.js if it fails
+    // if we have embedded model-viewer elements (mvHeadset/mvSelf), prefer them
+    if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
       const success = await setModelViewerSrc(file);
       if (success) {
         // mark preview active on success
@@ -343,6 +342,7 @@ buttons.forEach((btn) => {
       return;
     }
 
+    // fallback to Three.js loader
     loadModel(file);
   });
 });
@@ -359,8 +359,8 @@ previewEls.forEach((el) => {
     const ok = await testAsset(file);
     if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
 
-    const mv = document.getElementById('mv-main');
-    if (mv) {
+    // prefer embedded model-viewer elements when available
+    if ((file === 'headset0.glb' && mvHeadset) || (file === 'self-portrait2.glb' && mvSelf)) {
       const success = await setModelViewerSrc(file);
       if (!success) {
         setStatus('❌ model-viewer failed; attempting Three.js loader');
@@ -372,57 +372,9 @@ previewEls.forEach((el) => {
   });
 });
 
-// Add a quick action button to load the self-portrait directly
-const btnSelf = document.getElementById('btn-self');
-if (btnSelf) {
-  btnSelf.addEventListener('click', async () => {
-    const file = 'self-portrait2.glb';
-    setStatus('Checking asset…');
-    const ok = await testAsset(file);
-    if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
 
-    // mark model-switch and preview active
-    document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
-    document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
 
-    const mv = document.getElementById('mv-main');
-    if (mv) {
-      const success = await setModelViewerSrc(file);
-      if (!success) {
-        setStatus('❌ model-viewer failed; attempting Three.js loader');
-        loadModel(file);
-      }
-    } else {
-      loadModel(file);
-    }
-  });
-}
 
-// Add a quick action button to load Headset 0 directly
-const btnHeadset = document.getElementById('btn-headset');
-if (btnHeadset) {
-  btnHeadset.addEventListener('click', async () => {
-    const file = 'headset0.glb';
-    setStatus('Checking asset…');
-    const ok = await testAsset(file);
-    if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
-
-    // mark model-switch and preview active
-    document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
-    document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
-
-    const mv = document.getElementById('mv-main');
-    if (mv) {
-      const success = await setModelViewerSrc(file);
-      if (!success) {
-        setStatus('❌ model-viewer failed; attempting Three.js loader');
-        loadModel(file);
-      }
-    } else {
-      loadModel(file);
-    }
-  });
-}
 
 // model-viewer elements
 const mvHeadset = document.getElementById('mv-headset');

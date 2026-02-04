@@ -181,9 +181,7 @@ html, body {
   border-color: rgba(140, 160, 255, 0.35);
 }
 
-/* Small control button next to model switch */
-#btn-self { margin-left: 12px; padding: 6px 10px; font-size: 13px; }
-#btn-self:hover { opacity: 0.95; }
+
 
 
 .previews {
