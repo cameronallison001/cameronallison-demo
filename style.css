@@ -21,6 +21,12 @@ h2 {
 * {
   box-sizing: border-box;
 }
+canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
 
 html,
 body {
