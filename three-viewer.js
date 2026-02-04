@@ -1,6 +1,7 @@
 import * as THREE from "https://unpkg.com/three@0.158.0/build/three.module.js";
 import { GLTFLoader } from "https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js";
+const fallbackImg = document.getElementById("model-fallback");
 
 const container = document.getElementById("three-container");
 const statusEl = document.getElementById("three-status");
@@ -94,7 +95,8 @@ function frameObject(obj) {
 }
 
 // Load model (PATH MUST MATCH FOLDER + CASE)
-const MODEL_URL = "./models/headset4.glb";
+const MODEL_URL = new URL("./models/headset4.glb", import.meta.url).href;
+
 const loader = new GLTFLoader();
 
 loader.load(
