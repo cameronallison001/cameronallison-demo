@@ -361,9 +361,11 @@ previewEls.forEach((el) => {
 
     const mv = document.getElementById('mv-main');
     if (mv) {
-      setStatus('Loading ' + file + ' (model-viewer)…');
-      mv.setAttribute('src', MODEL_DIR + file + '?v=1');
-      document.getElementById('three-container').style.display = 'none';
+      const success = await setModelViewerSrc(file);
+      if (!success) {
+        setStatus('❌ model-viewer failed; attempting Three.js loader');
+        loadModel(file);
+      }
     } else {
       loadModel(file);
     }
@@ -385,9 +387,37 @@ if (btnSelf) {
 
     const mv = document.getElementById('mv-main');
     if (mv) {
-      setStatus('Loading ' + file + ' (model-viewer)…');
-      mv.setAttribute('src', MODEL_DIR + file + '?v=1');
-      document.getElementById('three-container').style.display = 'none';
+      const success = await setModelViewerSrc(file);
+      if (!success) {
+        setStatus('❌ model-viewer failed; attempting Three.js loader');
+        loadModel(file);
+      }
+    } else {
+      loadModel(file);
+    }
+  });
+}
+
+// Add a quick action button to load Headset 0 directly
+const btnHeadset = document.getElementById('btn-headset');
+if (btnHeadset) {
+  btnHeadset.addEventListener('click', async () => {
+    const file = 'headset0.glb';
+    setStatus('Checking asset…');
+    const ok = await testAsset(file);
+    if (!ok) { setStatus('❌ Asset unreachable: ' + file); showPlaceholder(); return; }
+
+    // mark model-switch and preview active
+    document.querySelectorAll('.model-btn').forEach(b => b.classList.toggle('active', b.dataset.model === file));
+    document.querySelectorAll('.model-preview').forEach(p => p.classList.toggle('active', p.dataset.model === file));
+
+    const mv = document.getElementById('mv-main');
+    if (mv) {
+      const success = await setModelViewerSrc(file);
+      if (!success) {
+        setStatus('❌ model-viewer failed; attempting Three.js loader');
+        loadModel(file);
+      }
     } else {
       loadModel(file);
     }
