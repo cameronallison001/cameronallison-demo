@@ -474,7 +474,7 @@ async function setModelViewerSrc(file) {
 }
 
 // initial model: prefer model-viewer for simplicity
-const initial = MODELS[0].id;
+const initial = 'headset0.glb';
 // show the static element and let it load on its own
 showModelViewerFor(initial);
 // also run the helper to get timeout/logging
