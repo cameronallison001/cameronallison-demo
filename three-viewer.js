@@ -476,8 +476,9 @@ async function setModelViewerSrc(file) {
   mv.addEventListener('load', onLoad);
   mv.addEventListener('error', onError);
 
-  // set src (model-viewer will fetch it)
-  mv.setAttribute('src', MODEL_DIR + file + '?v=1');
+  // set src (model-viewer will fetch it). Add cache-buster to force a fresh fetch each time we switch.
+  const srcUrl = MODEL_DIR + file + '?v=1&cb=' + Date.now();
+  mv.setAttribute('src', srcUrl);
   // make sure Three.js canvas hidden
   const container = document.getElementById('three-container'); if (container) container.style.display = 'none';
   setStatus('Loading ' + file + ' (model-viewer)…');
